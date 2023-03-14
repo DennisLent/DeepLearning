@@ -17,13 +17,13 @@ def timing(f):
 
 root = "C:/Users/Dennis Lentschig/Desktop/Python/DeepLearning/archive"
 
-image_size = 75
+
 
 categories = ["Butterfly", "Cat", "Chicken", "Cow", "Dog", "Elephant", "Horse", "Sheep", "Spider", "Squirrel"]
 
 
 @timing
-def create_data():
+def create_data(image_size = 75):
     training_data = []
     for category in categories:
         path = os.path.join(root, category)
@@ -35,7 +35,7 @@ def create_data():
             #cv2.imshow(f"{class_indentifier}", new_array_bw)
             #cv2.waitKey(0)
             training_data.append([new_array_bw, class_indentifier])
-    return training_data
+    return training_data, categories
 
 if __name__ == "__main__":
-    create_data()
+    create_data(image_size = 75)
