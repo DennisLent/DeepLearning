@@ -11,7 +11,7 @@ def timing(f):
         ts = time()
         result = f(*args, **kw)
         te = time()
-        print(f"function took {te-ts} sec")
+        print(f"sampling took {te-ts} sec")
         return result
     return wrap
 
@@ -30,9 +30,12 @@ def create_data():
         class_indentifier = categories.index(category)
         for image in os.listdir(path):
             image_array = cv2.imread(os.path.join(path, image))
-            new_array = cv2.resize(image_array, (image_size, image_size))
-            new_array_bw = cv2.cvtColor(new_array, cv2.COLOR_BGR2GRAY)
+            bw_image = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
+            new_array_bw = cv2.resize(bw_image, (image_size, image_size))
             #cv2.imshow(f"{class_indentifier}", new_array_bw)
             #cv2.waitKey(0)
             training_data.append([new_array_bw, class_indentifier])
     return training_data
+
+if __name__ == "__main__":
+    create_data()
