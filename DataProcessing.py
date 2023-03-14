@@ -29,12 +29,15 @@ def create_data(image_size = 75):
         path = os.path.join(root, category)
         class_indentifier = categories.index(category)
         for image in os.listdir(path):
-            image_array = cv2.imread(os.path.join(path, image))
-            bw_image = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
-            new_array_bw = cv2.resize(bw_image, (image_size, image_size))
-            #cv2.imshow(f"{class_indentifier}", new_array_bw)
-            #cv2.waitKey(0)
-            training_data.append([new_array_bw, class_indentifier])
+            try:
+                image_array = cv2.imread(os.path.join(path, image))
+                bw_image = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
+                new_array_bw = cv2.resize(bw_image, (image_size, image_size))
+                #cv2.imshow(f"{class_indentifier}", new_array_bw)
+                #cv2.waitKey(0)
+                training_data.append([new_array_bw, class_indentifier])
+            except Exception as e:
+                pass
     return training_data, categories
 
 if __name__ == "__main__":

@@ -24,12 +24,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random
 X_train, X_test = np.array(X_train) / 255, np.array(X_test) / 255
 y_train, y_test = np.asarray(y_train), np.asarray(y_test)
 
-print(X_train[0])
-print(np.shape(X_train[0]))
+print(np.shape(X_train))
+print(np.shape(y_train))
 
 #build model
 model = models.Sequential(name="AnimalRecognition")
-model.add(layers.Conv2D(32, (3,3), padding="same", input_shape=(image_size, image_size, 1), activation="relu"))
+model.add(layers.Conv2D(32, (3,3), padding="same", input_shape=(np.shape(X_train)), activation="relu"))
 model.add(layers.Conv2D(32, (3,3), activation="relu"))
 model.add(layers.MaxPool2D(pool_size=(2,2)))
 model.add(layers.Dropout(0.25))
@@ -41,7 +41,7 @@ model.add(layers.Dense(len(categories), activation="softmax"))
 
 model.compile(loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"])
 
-history = model.fit(X_train, y_train, epochs=15)
+history = model.fit(X_train, y_train, epochs=10)
 
 plt.plot(history.history["accuracy"], label="accuracy")
 plt.xlabel("Epoch")
