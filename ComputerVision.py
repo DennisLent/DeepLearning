@@ -1,5 +1,16 @@
+from DataProcessing import create_data
+import random
+import numpy as np
 
+data = create_data()
+print(data[0])
+random.shuffle(data)
 
+X = []
+y = []
 
-
-translate = {"cane": "dog", "cavallo": "horse", "elefante": "elephant", "farfalla": "butterfly", "gallina": "chicken", "gatto": "cat", "mucca": "cow", "pecora": "sheep", "scoiattolo": "squirrel", "dog": "cane", "cavallo": "horse", "elephant" : "elefante", "butterfly": "farfalla", "chicken": "gallina", "cat": "gatto", "cow": "mucca", "spider": "ragno", "squirrel": "scoiattolo"}
+for features, label in data:
+    #print(f"picture array length: {len(features)}")
+    #print(f"classification: {label}")
+    X.append(features)
+    y.append(label)
