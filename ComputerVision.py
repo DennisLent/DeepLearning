@@ -29,19 +29,23 @@ print(np.shape(y_train))
 
 #build model
 model = models.Sequential(name="AnimalRecognition")
-model.add(layers.Conv2D(32, (3,3), padding="same", input_shape=(np.shape(X_train)), activation="relu"))
-model.add(layers.Conv2D(32, (3,3), activation="relu"))
+model.add(layers.Conv2D(32, (4,4), padding="same", input_shape=(np.shape(X_train))))
+model.add(layers.Activation("relu"))
+model.add(layers.Conv2D(128, (4,4)))
+model.add(layers.Activation("relu"))
 model.add(layers.MaxPool2D(pool_size=(2,2)))
 model.add(layers.Dropout(0.25))
 
 model.add(layers.Flatten())
-model.add(layers.Dense(512, activation="relu"))
+model.add(layers.Dense(256))
+model.add(layers.Activation("relu"))
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(len(categories), activation="softmax"))
+model.add(layers.Dense(len(categories)))
+model.add(layers.Activation("softmax"))
 
 model.compile(loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"])
 
-history = model.fit(X_train, y_train, epochs=10)
+history = model.fit(X_train, y_train, epochs=10, batch_size=32)
 
 plt.plot(history.history["accuracy"], label="accuracy")
 plt.xlabel("Epoch")
