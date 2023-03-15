@@ -21,15 +21,13 @@ for features, label in data:
     y.append(label)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=23)
-X_train, X_test = np.array(X_train) / 255, np.array(X_test) / 255
+X_train, X_test = np.array(X_train), np.array(X_test)
 y_train, y_test = np.asarray(y_train), np.asarray(y_test)
 
-print(np.shape(X_train))
-print(np.shape(y_train))
 
 #build model
 model = models.Sequential(name="AnimalRecognition")
-model.add(layers.Conv2D(32, (4,4), padding="same", input_shape=(np.shape(X_train))))
+model.add(layers.Conv2D(32, (4,4), padding="same", input_shape=(image_size, image_size, 3)))
 model.add(layers.Activation("relu"))
 model.add(layers.Conv2D(128, (4,4)))
 model.add(layers.Activation("relu"))
@@ -51,4 +49,3 @@ plt.plot(history.history["accuracy"], label="accuracy")
 plt.xlabel("Epoch")
 plt.ylabel("Accuracy")
 plt.show()
-
