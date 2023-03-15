@@ -1,4 +1,5 @@
 # Deep Learning
 to do:
-- update network structure (too much memory is used)
-- reshape matrices of images because they now use RGB
+- update network to improve accuracy
+Epoch 10/10
+549/549 [==============================] - 359s 653ms/step - loss: 1.7109 - accuracy: 0.4222

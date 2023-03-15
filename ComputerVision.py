@@ -1,15 +1,16 @@
 from DataProcessing import create_data, timing
-import random
 import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from keras import layers, models
+from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
 image_size = 64
 
 data, categories = create_data(image_size)
 #print(data[0], np.shape(data[0][0]))
+num_categories = len(categories)
 
 X = []
 y = []
@@ -22,7 +23,7 @@ for features, label in data:
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=23)
 X_train, X_test = np.array(X_train), np.array(X_test)
-y_train, y_test = np.asarray(y_train), np.asarray(y_test)
+y_train, y_test = to_categorical(y_train, num_classes=num_categories), to_categorical(y_test, num_classes=num_categories)
 
 
 #build model
@@ -38,7 +39,7 @@ model.add(layers.Flatten())
 model.add(layers.Dense(256))
 model.add(layers.Activation("relu"))
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(len(categories)))
+model.add(layers.Dense(num_categories))
 model.add(layers.Activation("softmax"))
 
 model.compile(loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"])
