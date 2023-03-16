@@ -30,6 +30,8 @@ def create_data(image_size = 75):
         class_indentifier = categories.index(category)
         for image in os.listdir(path):
             try:
+                if image.endswith('.png'):
+                    os.remove(image) 
                 image_array = cv2.imread(os.path.join(path, image))
                 new_array = cv2.resize(image_array, (image_size, image_size))
                 #print(new_array)
