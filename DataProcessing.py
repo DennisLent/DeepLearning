@@ -4,6 +4,7 @@ from os import path
 import cv2
 from functools import wraps
 from time import time
+import pickle
 
 def timing(f):
     @wraps(f)
@@ -17,9 +18,6 @@ def timing(f):
 
 root = "C:/Users/Dennis Lentschig/Desktop/Python/DeepLearning/archive"
 
-
-
-categories = ["Butterfly", "Cat", "Chicken", "Cow", "Dog", "Elephant", "Horse", "Sheep", "Spider", "Squirrel"]
 
 
 @timing
