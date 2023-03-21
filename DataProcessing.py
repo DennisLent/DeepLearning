@@ -16,29 +16,27 @@ def timing(f):
         return result
     return wrap
 
-root = "C:/Users/Dennis Lentschig/Desktop/Python/DeepLearning/archive"
-
-
-
 @timing
-def create_data(image_size = 75):
-    training_data = []
-    for category in categories:
-        path = os.path.join(root, category)
-        class_indentifier = categories.index(category)
-        for image in os.listdir(path):
-            try:
-                if image.endswith('.png'):
-                    os.remove(image) 
-                image_array = cv2.imread(os.path.join(path, image))
-                new_array = cv2.resize(image_array, (image_size, image_size))
-                #print(new_array)
-                #cv2.imshow(f"{class_indentifier}", new_array)
-                #cv2.waitKey(0)
-                training_data.append([new_array, class_indentifier])
-            except Exception as e:
-                pass
-    return training_data, categories
+def create_data(directory):
+
+    def unpickle(file):
+        with open(file, 'rb') as fo:
+            dict = pickle.load(fo, encoding='bytes')
+        return dict
+    
+    all_data = {}
+
+    for filename in os.listdir(directory):
+        print(f"unpickling {filename}")
+        f = os.path.join(directory, filename)
+        if os.path.isfile(f):
+            dict = unpickle(f)
+            print(f"unpickled dictionary: {dict}")
+            all_data.update(dict)
+    
+    return all_data
+
 
 if __name__ == "__main__":
-    create_data(image_size = 150)
+    test_data = create_data("test")
+    print(f"Length of dict = {len(test_data)}")
