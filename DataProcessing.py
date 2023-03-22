@@ -5,6 +5,8 @@ import cv2
 from functools import wraps
 from time import time
 import pickle
+import matplotlib.pyplot as plt
+import numpy as np
 
 def timing(f):
     @wraps(f)
@@ -27,11 +29,9 @@ def create_data(directory):
     all_data = {}
 
     for filename in os.listdir(directory):
-        print(f"unpickling {filename}")
         f = os.path.join(directory, filename)
         if os.path.isfile(f):
             dict = unpickle(f)
-            print(f"unpickled dictionary: {dict}")
             all_data.update(dict)
     
     return all_data
@@ -39,4 +39,18 @@ def create_data(directory):
 
 if __name__ == "__main__":
     test_data = create_data("test")
-    print(f"Length of dict = {len(test_data)}")
+    print(f"keys of the dictionary = {test_data.keys()}")
+    plt.figure(figsize=(10,10))
+    for i in range(25):
+        plt.subplot(5,5,i+1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.grid(False)
+        image_array = np.array(test_data[b'data'][i])
+        image_array = image_array.reshape((32,32,3))
+        print(f"image array = {image_array}")
+        plt.imshow(image_array.astype(np.uint8))
+    plt.show()
+
+
+
