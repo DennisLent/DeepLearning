@@ -1,7 +1,6 @@
 import os
 from os import listdir
 from os import path
-import cv2
 from functools import wraps
 from time import time
 import pickle
@@ -9,6 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def timing(f):
+    """
+    wrapper function to time (just for my sake)
+    """
     @wraps(f)
     def wrap(*args, **kw):
         ts = time()
@@ -20,13 +22,16 @@ def timing(f):
 
 @timing
 def create_data(directory):
-
+    """
+    Unpickle the pickled pictures with their lables
+    """
     def unpickle(file):
         with open(file, 'rb') as fo:
             dict = pickle.load(fo, encoding='bytes')
         return dict
     
     all_data = {}
+    label_dict = {0: "airplane", 1:"automobile", 2:"bird", 3:"cat", 4:"deer", 5:"dog", 6:"frog", 7:"horse", 8:"ship", 9:"truck"}
 
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
@@ -34,12 +39,20 @@ def create_data(directory):
             dict = unpickle(f)
             all_data.update(dict)
     
-    return all_data
+    return all_data, label_dict
 
 
 if __name__ == "__main__":
-    test_data = create_data("test")
+    test_data, label_dict = create_data("test")
     print(f"keys of the dictionary = {test_data.keys()}")
+
+    def make_image(image_array):
+        r = image_array[:1024].reshape(32,32)
+        g = image_array[1024:2048].reshape(32,32)
+        b = image_array[2048:].reshape(32,32)
+        rgb = np.stack([r,g,b], axis=-1)
+        return rgb
+
     plt.figure(figsize=(10,10))
     for i in range(25):
         plt.subplot(5,5,i+1)
@@ -47,9 +60,9 @@ if __name__ == "__main__":
         plt.yticks([])
         plt.grid(False)
         image_array = np.array(test_data[b'data'][i])
-        image_array = image_array.reshape((32,32,3))
-        print(f"image array = {image_array}")
-        plt.imshow(image_array.astype(np.uint8))
+        image_array = make_image(image_array)
+        plt.imshow(image_array)
+        plt.xlabel(label_dict[test_data[b'labels'][i]])
     plt.show()
 
 
