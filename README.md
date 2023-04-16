@@ -1,5 +1,6 @@
 # Deep Learning
 to do:
+- write own convolutional network using numpy/scipy/sklearn
 - update network to improve accuracy
 - v2 (->conv32, pooling2,2, conv32, pooling2,2, conv64, flatten, dense10) with Test accuracy = 0.5235002040863037 (10 epochs)
 - v3 (->conv32, pooling2,2, conv32, pooling2,2, conv64, flatten, dense64, dense10) with Test accuracy = 0.3882308006286621 (10 epochs)
