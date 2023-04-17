@@ -1,4 +1,13 @@
 # Deep Learning
+setup virtual environment (python 3.10 or higher)
+
+python3 -m venv --system-site-packages deep_env
+source deep_env/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+
+
 to do:
 - write own convolutional network using numpy/scipy/sklearn
 - update network to improve accuracy
