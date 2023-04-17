@@ -30,6 +30,13 @@ def create_data(directory):
             dict = pickle.load(fo, encoding='bytes')
         return dict
     
+    def make_image(image_array):
+        r = image_array[:1024].reshape(32,32)
+        g = image_array[1024:2048].reshape(32,32)
+        b = image_array[2048:].reshape(32,32)
+        rgb = np.stack([r,g,b], axis=-1)
+        return rgb
+    
     all_data = {}
     label_dict = {0: "airplane", 1:"automobile", 2:"bird", 3:"cat", 4:"deer", 5:"dog", 6:"frog", 7:"horse", 8:"ship", 9:"truck"}
 
@@ -38,29 +45,23 @@ def create_data(directory):
         if os.path.isfile(f):
             dict = unpickle(f)
             all_data.update(dict)
+
+    data, labels = [], []
     
-    for i in range(len(all_data)):
+    for i in range(len(all_data[b'data'])):
         image_array = np.array(all_data[b'data'][i])
-        r = image_array[:1024].reshape(32,32)
-        g = image_array[1024:2048].reshape(32,32)
-        b = image_array[2048:].reshape(32,32)
-        rgb = np.stack([r,g,b], axis=-1)
-        label = all_data[b'labels'][i]
+        image_array = make_image(image_array)
+        image_label = all_data[b'labels'][i]
+        
+        data.append(image_array)
+        labels.append(image_label)
 
     
-    return all_data, label_dict
+    return np.asarray(data), np.asarray(labels), label_dict
 
 
 if __name__ == "__main__":
-    test_data, label_dict = create_data("test")
-    print(f"keys of the dictionary = {test_data.keys()}")
-
-    def make_image(image_array):
-        r = image_array[:1024].reshape(32,32)
-        g = image_array[1024:2048].reshape(32,32)
-        b = image_array[2048:].reshape(32,32)
-        rgb = np.stack([r,g,b], axis=-1)
-        return rgb
+    test_data, test_labels, label_dict = create_data("test")
 
     plt.figure(figsize=(10,10))
     for i in range(36):
@@ -68,10 +69,9 @@ if __name__ == "__main__":
         plt.xticks([])
         plt.yticks([])
         plt.grid(False)
-        image_array = np.array(test_data[b'data'][i])
-        image_array = make_image(image_array)
+        image_array = test_data[i]
         plt.imshow(image_array)
-        plt.xlabel(label_dict[test_data[b'labels'][i]])
+        plt.xlabel(label_dict[test_labels[i]])
     plt.show()
 
 

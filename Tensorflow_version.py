@@ -6,52 +6,43 @@ from keras import layers, models
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
-image_size = 32
+image_size = 32 #default size
 
 "Output of create_data() -> dict_keys([b'batch_label', b'labels', b'data', b'filenames'])"
 
-test_data, categories = create_data("test")
-validation_data, _ = create_data("validation")
-#print(data[0], np.shape(data[0][0]))
+train_data, train_labels, categories = create_data("test")
+val_data, val_labels, _ = create_data("validation")
 num_categories = len(categories)
 
-X_train, X_test = np.array(test_data[b'data']), np.array(validation_data[b'data'])
-y_train_cat, y_test_cat = to_categorical(y_train, num_classes=num_categories), to_categorical(y_test, num_classes=num_categories)
-
-#Short overview of test set
-def show_overview():
-    plt.figure(figsize=(10,10))
-    for i in range(25):
-        plt.subplot(5,5,i+1)
-        plt.xticks([])
-        plt.yticks([])
-        plt.grid(False)
-        plt.imshow(X_train[i])
-        plt.xlabel(categories[y_train[i]])
-    print(f"Shape of X_train: {np.shape(X_train)} \n shape of X_test: {np.shape(X_test)}")
-    print(f"Shape of y_train: {np.shape(y_train)} \n Shape of y_test: {np.shape(y_test)}")
-    plt.show()
-
-#show_overview()
+X_train, X_test = train_data, val_data
+y_train_cat, y_test_cat = to_categorical(train_labels, num_classes=num_categories), to_categorical(val_labels, num_classes=num_categories)
 
 
 #build model
 model = models.Sequential(name="AnimalRecognition")
-model.add(layers.Conv2D(128, (3, 3), padding="same", activation='relu', input_shape=(image_size, image_size, 3)))
+model.add(layers.Conv2D(32, (3, 3), padding="valid", activation='relu', input_shape=(image_size, image_size, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Dropout(0.25))
+
+model.add(layers.Conv2D(64, (3, 3), padding="valid", activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Dropout(0.25))
+
+model.add(layers.Conv2D(128, (3, 3), padding="valid", activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Dropout(0.25))
 
 model.add(layers.Flatten())
-model.add(layers.Dense(num_categories))
-model.add(layers.Activation("softmax"))
+model.add(layers.Dense(512, activation="relu"))
+model.add(layers.Dropout(0.5))
+
+model.add(layers.Dense(num_categories, activation="softmax"))
 
 model.summary()
 
 model.compile(loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"])
 
-history = model.fit(X_train, y_train_cat, epochs=15, validation_data=(X_test, y_test_cat))
+history = model.fit(X_train, y_train_cat, batch_size=128, epochs=30, validation_data=(X_test, y_test_cat))
 
 plt.plot(history.history["accuracy"], label="accuracy")
 plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
