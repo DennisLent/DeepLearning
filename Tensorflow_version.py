@@ -19,30 +19,50 @@ y_train_cat, y_test_cat = to_categorical(train_labels, num_classes=num_categorie
 
 
 #build model
-model = models.Sequential(name="AnimalRecognition")
-model.add(layers.Conv2D(32, (3, 3), padding="valid", activation='relu', input_shape=(image_size, image_size, 3)))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Dropout(0.25))
+def conv_block(x, filters, kernel_size, strides):
+    x = tf.keras.layers.Conv2D(filters, kernel_size, strides=strides, padding='same', use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.ReLU()(x)
+    return x
 
-model.add(layers.Conv2D(64, (3, 3), padding="valid", activation='relu'))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Dropout(0.25))
+def identity_block(x, filters, kernel_size):
+    x_shortcut = x
+    x = conv_block(x, filters, kernel_size, strides=(1, 1))
+    x = tf.keras.layers.Conv2D(filters, kernel_size, strides=(1, 1), padding='same', use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Add()([x_shortcut, x])
+    x = tf.keras.layers.ReLU()(x)
+    return x
 
-model.add(layers.Conv2D(128, (3, 3), padding="valid", activation='relu'))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Dropout(0.25))
+def resnet(input_shape, num_classes):
+    inputs = tf.keras.Input(shape=input_shape)
+    x = conv_block(inputs, filters=64, kernel_size=(7, 7), strides=(2, 2))
+    x = tf.keras.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding='same')(x)
+    x = identity_block(x, filters=64, kernel_size=(3, 3))
+    x = identity_block(x, filters=64, kernel_size=(3, 3))
+    x = conv_block(x, filters=128, kernel_size=(1, 1), strides=(2, 2))
+    x = identity_block(x, filters=128, kernel_size=(3, 3))
+    x = identity_block(x, filters=128, kernel_size=(3, 3))
+    x = conv_block(x, filters=256, kernel_size=(1, 1), strides=(2, 2))
+    x = identity_block(x, filters=256, kernel_size=(3, 3))
+    x = identity_block(x, filters=256, kernel_size=(3, 3))
+    x = conv_block(x, filters=512, kernel_size=(1, 1), strides=(2, 2))
+    x = identity_block(x, filters=512, kernel_size=(3, 3))
+    x = identity_block(x, filters=512, kernel_size=(3, 3))
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    outputs = tf.keras.layers.Dense(num_classes, activation='softmax')(x)
+    model = tf.keras.Model(inputs=inputs, outputs=outputs)
+    return model
 
-model.add(layers.Flatten())
-model.add(layers.Dense(512, activation="relu"))
-model.add(layers.Dropout(0.5))
-
-model.add(layers.Dense(num_categories, activation="softmax"))
+model = resnet(input_shape=(32,32,3), num_classes=num_categories)
 
 model.summary()
 
 model.compile(loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"])
 
-history = model.fit(X_train, y_train_cat, batch_size=128, epochs=30, validation_data=(X_test, y_test_cat))
+early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=4, mode="max")
+
+history = model.fit(X_train, y_train_cat, epochs=30, validation_data=(X_test, y_test_cat), callbacks=early_stop)
 
 plt.plot(history.history["accuracy"], label="accuracy")
 plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
@@ -54,3 +74,8 @@ test_loss, test_acc = model.evaluate(X_test,  y_test_cat, verbose=2)
 print(f"Test accuracy = {test_acc}")
 
 plt.show()
+
+ans = input("save the model? [y/n]:")
+if ans.lower() == "y":
+    name_model = input("What should it be saved as?:")
+    model.save(f"{name_model}.h5")
