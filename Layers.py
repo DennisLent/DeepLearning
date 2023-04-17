@@ -158,10 +158,68 @@ class Conv2D():
         self.bias_grad = np.sum(dup, axis=(0, 2, 3))
 
         return dx
+    
+    def __str__(self) -> str:
+        return f"2D Conv k={self.kernel}x{self.kernel}"
+
+class MaxPool2D():
+
+    def __init__(self, kernel, stride, padding):
+        self.kernel = kernel
+        self.stride = stride
+        self.padding = padding
+    
+    def feed_forward(self, x):
+        padded = np.pad(x, ((self.padding, self.padding), (self.padding, self.padding)), mode="constant")
+        n, c, h, w = np.shape(x)
+
+        hp, wp = 1 + (h + 2*self.padding - self.kernel) // self.stride, 1 + (w + 2*self.padding - self.kernel) // self.stride
+
+        y = np.empty(shape=(n*c, hp, wp))
+
+        for i in range(hp):
+            for j in range(wp):
+                h_diff = i*self.stride
+                w_diff = j*self.stride
+
+                output = padded[:,:,h_diff:h_diff+self.kernel,w_diff:w_diff+self.kernel].reshape(n*c, -1)
+
+                y[:,i,j], _ = np.max(output, axis=1)
+        
+        y = y.reshape(n, c, hp, wp)
+        self.cache = x
+
+        return y
+    
+    def feed_backward(self, dup):
+        x = self.cache
+        dx = np.zeros_like(x)
+
+        n, c, hp, wp = np.shape(dx)
+
+        for i in range(hp):
+            for j in range(wp):
+                h_diff = i * self.stride
+                w_diff = j * self.stride
+                window = x[:, :, h_diff:h_diff+self.kernel, w_diff:w_diff+self.kernel].reshape(n*c, -1)
+
+                indices = np.argmax(window, axis=1)
+
+                dwindow = np.zeros_like(window)
+
+                dwindow[np.arange(n*c), indices] += dup[:, :, i, j].ravel()
+
+                dx[:, :, h_diff:h_diff+self.kernel, w_diff:w_diff+self.kernel] += dwindow.reshape(n, c, self.kernel, self.kernel)
+        
+        return dx
+
+    def __str__(self) -> str:
+        return f"2D Max Pooling"
+
+
+
 
         
-            
-
 
 if __name__ == "__main__":
     
