@@ -4,7 +4,7 @@ import tensorflow as tf
 from keras import layers, models
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
-from tensorflow.keras.applications import EfficientNetB0
+from keras.applications import EfficientNetB0
 
 def conv_block(x, filters, kernel_size, strides):
     x = tf.keras.layers.Conv2D(filters, kernel_size, strides=strides, padding='same', use_bias=False)(x)
