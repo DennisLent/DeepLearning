@@ -6,23 +6,16 @@ from keras import layers, models
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 
-image_size = 64
+image_size = 32
 
-data, categories = create_data(image_size)
+"Output of create_data() -> dict_keys([b'batch_label', b'labels', b'data', b'filenames'])"
+
+test_data, categories = create_data("test")
+validation_data, _ = create_data("validation")
 #print(data[0], np.shape(data[0][0]))
 num_categories = len(categories)
 
-X = []
-y = []
-
-for features, label in data:
-    #print(f"picture array length: {len(features)}")
-    #print(f"classification: {label}")
-    X.append(features)
-    y.append(label)
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=23)
-X_train, X_test = np.array(X_train), np.array(X_test)
+X_train, X_test = np.array(test_data[b'data']), np.array(validation_data[b'data'])
 y_train_cat, y_test_cat = to_categorical(y_train, num_classes=num_categories), to_categorical(y_test, num_classes=num_categories)
 
 #Short overview of test set
