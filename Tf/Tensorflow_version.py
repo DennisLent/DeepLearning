@@ -1,4 +1,4 @@
-from DataProcessing import create_data
+from Cifar10_processing import create_data
 import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
