@@ -4,6 +4,7 @@ import tensorflow as tf
 from keras import layers, models
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
+from tensorflow.keras.applications import EfficientNetB0
 
 def conv_block(x, filters, kernel_size, strides):
     x = tf.keras.layers.Conv2D(filters, kernel_size, strides=strides, padding='same', use_bias=False)(x)
@@ -38,4 +39,16 @@ def resnet(input_shape, num_classes):
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
     outputs = tf.keras.layers.Dense(num_classes, activation='softmax')(x)
     model = tf.keras.Model(inputs=inputs, outputs=outputs)
+    return model
+
+def efficientNet(input_shape, num_classes):
+    effnet = EfficientNetB0(weights='imagenet', include_top=False, input_shape=input_shape)
+
+    effnet.trainable = False
+
+    x = tf.keras.layers.GlobalAveragePooling2D()(effnet.output)
+
+    predictions = tf.keras.layers.Dense(10, activation='softmax')(x)
+
+    model = tf.keras.Model(inputs=effnet.input, outputs=predictions)
     return model

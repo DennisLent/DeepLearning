@@ -61,7 +61,7 @@ def create_data(directory):
 
 
 if __name__ == "__main__":
-    test_data, test_labels, label_dict = create_data("test")
+    test_data, test_labels, label_dict = create_data("Cifar10/test")
 
     plt.figure(figsize=(10,10))
     for i in range(36):

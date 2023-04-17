@@ -1,4 +1,4 @@
-from DataProcessing import create_data, timing
+from DataProcessing import create_data
 import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
@@ -18,11 +18,8 @@ num_categories = len(categories)
 X_train, X_test = train_data, val_data
 y_train_cat, y_test_cat = to_categorical(train_labels, num_classes=num_categories), to_categorical(val_labels, num_classes=num_categories)
 
-
-#build model
-
-
-model = Tensorflow_models.resnet(input_shape=(32,32,3), num_classes=num_categories)
+#model = Tensorflow_models.resnet(input_shape=(32,32,3), num_classes=num_categories)
+model = Tensorflow_models.efficientNet(input_shape=(32,32,3), num_classes=num_categories)
 
 model.summary()
 
