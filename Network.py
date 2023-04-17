@@ -30,6 +30,22 @@ def MSE(true, prediction):
     gradient = 2*(prediction - true)
     return loss, gradient
 
+def CrossEntropy(true, prediction):
+
+    def softmax(vec):
+        return np.exp(vec) / np.sum(np.exp(vec), axis=1, keepdims=True)
+    
+    prediction_softmax = softmax(prediction)
+    true = np.argmax(true, axis=1)
+    num_samples = np.shape(true)[0]
+    probability = -np.log(prediction_softmax[np.arange(num_samples), true])
+    loss = np.mean(probability)
+    gradient = prediction_softmax
+    gradient[np.arange(num_samples), true] -= 1
+    gradient /= num_samples
+
+    return loss, gradient
+
 
 if __name__ == "__main__":
 
@@ -43,11 +59,9 @@ if __name__ == "__main__":
         print(np.shape(y))
 
 
-    def x_or_problem():
+    def x_or_problem(lossfunc, learning_rate, iterations, title=None):
         x_or = np.array([[0,0], [0,1], [1, 0], [1,1]])
         result = np.array([[1,0], [0,1], [0,1], [1,0]])
-        iterations = 100
-        learning_rate = 1e-1
         input_dim, hidden_dim, output_dim = 2, 10, 2
         layers = [Layers.Linear(input_dim, hidden_dim), Layers.ReLU(), Layers.Linear(hidden_dim, output_dim)]
         network = DeepNetwork(layers)
@@ -56,21 +70,23 @@ if __name__ == "__main__":
 
         for _ in tqdm(range(iterations)):
             prediction = network.feed_forward(x_or)
-            loss, gradient = MSE(result, prediction)
+            loss, gradient = lossfunc(result, prediction)
             net_loss.append(loss)
             network.feed_backward(gradient)
             network.optimizer(learning_rate)
 
             true_labels = np.argmax(result, axis=1)
             predicted_labels = np.argmax(prediction, axis=1)
-            accuracy = np.mean(predicted_labels == true_labels) * 100
+            accuracy = np.mean(predicted_labels == true_labels)
             net_acc.append(accuracy)
         
-        fig, ax = plt.subplots(ncols=2, figsize=(15,15))
+        fig, ax = plt.subplots(ncols=3, figsize=(15,15))
         ax[0].plot(net_loss, label="loss")
-        ax[0].plot(net_acc, label="accuracy")
-        ax[0].legend()
         ax[0].set_xlabel("Iterations")
+        ax[0].set_title("Loss")
+        ax[1].plot(net_acc, label="accuracy")
+        ax[1].set_xlabel("Iterations")
+        ax[1].set_title("Accuracy")
 
         xx, yy = np.meshgrid(np.linspace(-0.2, 1.2, 100), np.linspace(-0.2, 1.2, 100))
         grid = np.c_[xx.ravel(), yy.ravel()]
@@ -78,11 +94,15 @@ if __name__ == "__main__":
         y = np.argmax(result, axis=1)
         Z = np.argmax(prediction, axis=1).reshape(xx.shape)
 
-        ax[1].scatter(x_or[:, 0], x_or[:, 1], c=y, cmap='coolwarm')
-        ax[1].contourf(xx, yy, Z, alpha=0.4, cmap='coolwarm')
+        ax[2].scatter(x_or[:, 0], x_or[:, 1], c=y, cmap='coolwarm')
+        ax[2].contourf(xx, yy, Z, alpha=0.4, cmap='coolwarm')
+        ax[2].set_title("Contour Plot")
+        if title is not None:
+            fig.suptitle(title)
 
         plt.show()
 
 
     #test_forward()
-    x_or_problem()
+    x_or_problem(MSE, 1e-2, 100, "XOR Problem with MSE")
+    x_or_problem(CrossEntropy, 5e-1, 150, "XOR Problem with Cross-Entropy")

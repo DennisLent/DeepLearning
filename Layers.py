@@ -87,6 +87,13 @@ class Tanh():
     def __str__(self) -> str:
         return "Tanh"
 
+class Softmax():
+    
+    def feed_forward(self, x):
+        y = np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
+        self.cache = y
+        return y
+
 if __name__ == "__main__":
     
     def test_backward():
