@@ -31,9 +31,9 @@ def create_data(directory, type):
         return dict
     
     def make_image(image_array):
-        r = image_array[:1024].reshape(32,32)
-        g = image_array[1024:2048].reshape(32,32)
-        b = image_array[2048:].reshape(32,32)
+        r = image_array[:1024].reshape(32,32) / 255.0
+        g = image_array[1024:2048].reshape(32,32) / 255.0
+        b = image_array[2048:].reshape(32,32) / 255.0
         rgb = np.stack([r,g,b], axis=-1)
         return rgb
     

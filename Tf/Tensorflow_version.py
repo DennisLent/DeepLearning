@@ -19,7 +19,8 @@ X_train, X_test = train_data, val_data
 y_train_cat, y_test_cat = to_categorical(train_labels, num_classes=num_categories), to_categorical(val_labels, num_classes=num_categories)
 
 #model = Tensorflow_models.resnet(input_shape=(32,32,3), num_classes=num_categories)
-model = Tensorflow_models.efficientNet(input_shape=(32,32,3), num_classes=num_categories)
+#model = Tensorflow_models.efficientNet(input_shape=(32,32,3), num_classes=num_categories)
+model = Tensorflow_models.basicCNN(input_shape=(32,32,3), num_classes=num_categories)
 
 model.summary()
 
