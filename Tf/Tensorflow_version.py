@@ -11,8 +11,8 @@ image_size = 32 #default size
 
 "Output of create_data() -> dict_keys([b'batch_label', b'labels', b'data', b'filenames'])"
 
-train_data, train_labels, categories = create_data("Cifar10/test")
-val_data, val_labels, _ = create_data("Cifar10/validation")
+train_data, train_labels, categories = create_data("cifar-10-batches-py", "data")
+val_data, val_labels, _ = create_data("cifar-10-batches-py", "test")
 num_categories = len(categories)
 
 X_train, X_test = train_data, val_data

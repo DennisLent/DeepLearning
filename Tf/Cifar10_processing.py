@@ -21,7 +21,7 @@ def timing(f):
     return wrap
 
 @timing
-def create_data(directory):
+def create_data(directory, type):
     """
     Unpickle the pickled pictures with their lables
     """
@@ -42,7 +42,7 @@ def create_data(directory):
 
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
-        if os.path.isfile(f):
+        if (type in filename) and (os.path.isfile(f)):
             dict = unpickle(f)
             all_data.update(dict)
 
@@ -61,7 +61,7 @@ def create_data(directory):
 
 
 if __name__ == "__main__":
-    test_data, test_labels, label_dict = create_data("Cifar10/test")
+    test_data, test_labels, label_dict = create_data("cifar-10-batches-py", "test")
 
     plt.figure(figsize=(10,10))
     for i in range(36):
