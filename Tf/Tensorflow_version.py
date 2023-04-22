@@ -28,7 +28,7 @@ model.compile(loss="categorical_crossentropy", optimizer="Adam", metrics=["accur
 
 early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=3, mode="max")
 
-history = model.fit(X_train, y_train_cat, epochs=30, validation_data=(X_test, y_test_cat), callbacks=early_stop)
+history = model.fit(X_train, y_train_cat, epochs=15, validation_data=(X_test, y_test_cat), callbacks=early_stop)
 
 plt.plot(history.history["accuracy"], label="accuracy")
 plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
