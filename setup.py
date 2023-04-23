@@ -10,6 +10,7 @@ if not os.path.exists("cifar-10-batches-py"):
     urllib.request.urlretrieve(url_cifar, filename_cifar)
 
 with tarfile.open(filename_cifar, "r:gz") as tar:
+    print(f"extracting {filename_cifar}...")
     tar.extractall()
 
 os.remove(filename_cifar)
