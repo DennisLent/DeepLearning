@@ -9,3 +9,4 @@ torchaudio
 tqdm
 tensorflow
 PyQt5
+gdown
