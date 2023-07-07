@@ -13,16 +13,24 @@ if not os.path.exists("cifar-10-batches-py"):
     print(f"downloading {filename_cifar}...")
     urllib.request.urlretrieve(url_cifar, filename_cifar)
 
-with tarfile.open(filename_cifar, "r:gz") as tar:
-    print(f"extracting {filename_cifar}...")
-    tar.extractall()
+    with tarfile.open(filename_cifar, "r:gz") as tar:
+        print(f"extracting {filename_cifar}...")
+        tar.extractall()
 
-os.remove(filename_cifar)
+    os.remove(filename_cifar)
+else:
+    print(f"{filename_cifar} already in directory")
+
+
 
 if not os.path.exists("mnist"):
     os.makedirs("mnist")
     print(f"downloading {filename_mnist}...")
-    gdown.download(url_mnist, output="mnist.zip", quiet=False)
-
+    gdown.download(url_mnist, output="mnist.zip", quiet=False, fuzzy=True)
     output = zipfile.ZipFile("mnist.zip")
     output.extractall("mnist")
+    os.remove("mnist.zip")
+else:
+    print(f"{filename_mnist} already in directory")
+
+    
